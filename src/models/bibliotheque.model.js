@@ -1,12 +1,14 @@
 const pool = require('../config/db');
+const { v4: uuidv4 } = require('uuid');
 
 // Créer une nouvelle bibliothèque
 const creer = async (nom, courriel, password) => {
+    const cle_api = uuidv4();
     const result = await pool.query(
-        `INSERT INTO bibliotheque (nom, courriel, password) 
-         VALUES ($1, $2, $3) 
+        `INSERT INTO bibliotheque (nom, courriel, cle_api, password) 
+         VALUES ($1, $2, $3, $4) 
          RETURNING *`,
-        [nom, courriel, password]
+        [nom, courriel, cle_api, password]
     );
     return result.rows[0];
 };
