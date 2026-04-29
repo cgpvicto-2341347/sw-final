@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Épreuve finale - Services Web H26</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f5f2ee;
+            --surface: #ffffff;
+            --border: #d8d3cc;
+            --text: #1a1714;
+            --muted: #7a736b;
+            --accent: #2c4a3e;
+            --accent-light: #e8f0ed;
+            --error: #c0392b;
+            --success: #2c4a3e;
+            --divider: #ccc8c2;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 48px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 0 48px;
+            width: 100%;
+            max-width: 860px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 48px;
+        }
+
+        .divider {
+            background-color: var(--divider);
+            width: 1px;
+        }
+
+        section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 28px;
+            color: var(--text);
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .field input[type="text"],
+        .field input[type="email"],
+        .field input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--surface);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus {
+            border-color: var(--accent);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 44px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 1rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .checkbox-field input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1.5px solid var(--text);
+            border-radius: 3px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--text);
+            color: var(--surface);
+        }
+
+        .message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .message.success {
+            background: var(--accent-light);
+            color: var(--success);
+            border: 1px solid #b5d0c5;
+        }
+
+        .message.error {
+            background: #fdf0ef;
+            color: var(--error);
+            border: 1px solid #f0c0bb;
+        }
+
+        .cle-api-result {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--accent-light);
+            border: 1px solid #b5d0c5;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            word-break: break-all;
+            display: none;
+        }
+
+        .btn-wrapper {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-wrapper .btn {
+            width: auto;
+            padding: 13px 32px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Épreuve finale - Services Web H26</h1>
+        <p>Claude Mbessa</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Création d'une bibliothèque -->
+        <section>
+            <h2>Création d'une bibliothèque</h2>
+
+            <div class="field">
+                <label for="create-nom">Nom de la bibliothèque</label>
+                <input type="text" id="create-nom" placeholder="Votre bibliothèque">
+            </div>
+
+            <div class="field">
+                <label for="create-courriel">Courriel</label>
+                <input type="email" id="create-courriel" placeholder="Votre courriel">
+            </div>
+
+            <div class="field">
+                <label for="create-password">Mot de passe</label>
+                <div class="password-wrapper">
+                    <input type="password" id="create-password" placeholder="••••••••">
+                    <button class="toggle-password" onclick="togglePassword('create-password', this)">👁</button>
+                </div>
+            </div>
+
+            <button class="btn" onclick="creerBibliotheque()">Créer</button>
+            <div class="message" id="create-message"></div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Récupération d'une clé API -->
+        <section>
+            <h2>Récupération d'une clé api</h2>
+
+            <div class="field">
+                <label for="get-courriel">Courriel</label>
+                <input type="email" id="get-courriel" placeholder="Votre courriel">
+            </div>
+
+            <div class="field">
+                <label for="get-password">Mot de passe</label>
+                <div class="password-wrapper">
+                    <input type="password" id="get-password" placeholder="••••••••">
+                    <button class="toggle-password" onclick="togglePassword('get-password', this)">👁</button>
+                </div>
+            </div>
+
+            <label class="checkbox-field">
+                <input type="checkbox" id="regenerer">
+                Générer une nouvelle clé
+            </label>
+
+            <div class="btn-wrapper">
+                <button class="btn" onclick="recupererCleApi()">Récupérer</button>
+            </div>
+
+            <div class="message" id="get-message"></div>
+            <div class="cle-api-result" id="cle-api-result"></div>
+        </section>
+
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        function showMessage(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = `message ${type}`;
+            el.style.display = 'block';
+        }
+
+        async function creerBibliotheque() {
+            const nom = document.getElementById('create-nom').value.trim();
+            const courriel = document.getElementById('create-courriel').value.trim();
+            const password = document.getElementById('create-password').value;
+
+            if (!nom || !courriel || !password) {
+                showMessage('create-message', 'Veuillez remplir tous les champs.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/bibliotheques`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nom, courriel, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('create-message', `Bibliothèque créée ! Clé API : ${data.cle_api}`, 'success');
+                } else {
+                    showMessage('create-message', data.erreur || 'Une erreur est survenue.', 'error');
+                }
+            } catch (err) {
+                showMessage('create-message', 'Impossible de contacter le serveur.', 'error');
+            }
+        }
+
+        async function recupererCleApi() {
+            const courriel = document.getElementById('get-courriel').value.trim();
+            const password = document.getElementById('get-password').value;
+            const regenerer = document.getElementById('regenerer').checked;
+
+            if (!courriel || !password) {
+                showMessage('get-message', 'Veuillez remplir tous les champs.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/bibliotheques/cle-api`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courriel, password, regenerer })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const msg = regenerer ? 'Nouvelle clé API générée !' : 'Clé API récupérée !';
+                    showMessage('get-message', msg, 'success');
+                    const cleEl = document.getElementById('cle-api-result');
+                    cleEl.textContent = data.cle_api;
+                    cleEl.style.display = 'block';
+                } else {
+                    showMessage('get-message', data.erreur || 'Une erreur est survenue.', 'error');
+                    document.getElementById('cle-api-result').style.display = 'none';
+                }
+            } catch (err) {
+                showMessage('get-message', 'Impossible de contacter le serveur.', 'error');
+            }
+        }
+    </script>
+
+</body>
+</html>

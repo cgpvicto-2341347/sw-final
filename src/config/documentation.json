@@ -1,0 +1,1084 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "API de gestion de prêt pour bibliothèques",
+        "summary": "API REST pour gérer les livres et les prêts d'une bibliothèque.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Serveur de développement"
+        },
+        {
+            "url": "https://votre-service.onrender.com",
+            "description": "Serveur en ligne"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "ApiKeyAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "x-api-key"
+            }
+        }
+    },
+    "paths": {
+        "/api/bibliotheques": {
+            "post": {
+                "summary": "Créer une bibliothèque",
+                "tags": ["Bibliothèque"],
+                "description": "Crée une nouvelle bibliothèque et retourne sa clé API.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "nom": { "type": "string", "example": "Bibliothèque de Victoriaville" },
+                                    "courriel": { "type": "string", "example": "admin@biblio.qc.ca" },
+                                    "password": { "type": "string", "example": "motdepasse123" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bibliothèque créée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": { "type": "string", "example": "Bibliothèque créée avec succès." },
+                                        "cle_api": { "type": "string", "example": "550e8400-e29b-41d4-a716-446655440000" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Nom, courriel et mot de passe sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Courriel déjà utilisé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Ce courriel est déjà utilisé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bibliotheques/cle-api": {
+            "post": {
+                "summary": "Récupérer ou régénérer une clé API",
+                "tags": ["Bibliothèque"],
+                "description": "Retourne la clé API en fournissant le courriel et le mot de passe. Le paramètre optionnel 'regenerer' permet de générer une nouvelle clé.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "courriel": { "type": "string", "example": "admin@biblio.qc.ca" },
+                                    "password": { "type": "string", "example": "motdepasse123" },
+                                    "regenerer": { "type": "boolean", "example": false }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Clé API retournée ou régénérée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "cle_api": { "type": "string", "example": "550e8400-e29b-41d4-a716-446655440000" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Courriel et mot de passe sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Mot de passe incorrect",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Mot de passe incorrect." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bibliothèque non trouvée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Aucune bibliothèque trouvée avec ce courriel." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/livres": {
+            "get": {
+                "summary": "Liste des livres de la bibliothèque",
+                "tags": ["Livres"],
+                "description": "Retourne la liste des livres. Par défaut, seulement les livres disponibles sont retournés.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "tous",
+                        "description": "Si true, retourne tous les livres incluant les empruntes.",
+                        "required": false,
+                        "schema": { "type": "boolean", "example": false }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des livres retournée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": { "type": "integer", "example": 1 },
+                                            "titre": { "type": "string", "example": "Le Petit Prince" },
+                                            "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                            "isbn": { "type": "string", "example": "978-2070612758" },
+                                            "disponible": { "type": "boolean", "example": true },
+                                            "description": { "type": "string", "example": "Un classique de la littérature française." },
+                                            "date_ajout": { "type": "string", "example": "2026-04-28" }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Ajouter un livre",
+                "tags": ["Livres"],
+                "description": "Ajoute un nouveau livre à la bibliothèque.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "titre": { "type": "string", "example": "Le Petit Prince" },
+                                    "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                    "isbn": { "type": "string", "example": "978-2070612758" },
+                                    "description": { "type": "string", "example": "Un classique de la littérature française." }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Livre ajouté avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "titre": { "type": "string", "example": "Le Petit Prince" },
+                                        "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                        "isbn": { "type": "string", "example": "978-2070612758" },
+                                        "disponible": { "type": "boolean", "example": true },
+                                        "description": { "type": "string", "example": "Un classique de la littérature française." },
+                                        "date_ajout": { "type": "string", "example": "2026-04-28" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Titre, auteur et ISBN sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/livres/{id}": {
+            "get": {
+                "summary": "Détail d'un livre",
+                "tags": ["Livres"],
+                "description": "Retourne le détail d'un livre avec la liste de ses prêts et leur statut.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du livre",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détail du livre retourné avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "titre": { "type": "string", "example": "Le Petit Prince" },
+                                        "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                        "isbn": { "type": "string", "example": "978-2070612758" },
+                                        "disponible": { "type": "boolean", "example": true },
+                                        "description": { "type": "string", "example": "Un classique de la littérature française." },
+                                        "prets": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": { "type": "integer", "example": 1 },
+                                                    "emprunteur": { "type": "string", "example": "Marie Tremblay" },
+                                                    "date_debut": { "type": "string", "example": "2026-04-01" },
+                                                    "date_retour": { "type": "string", "example": "2026-04-28" },
+                                                    "date_retour_reelle": { "type": "string", "example": null },
+                                                    "statut": { "type": "string", "example": "en_cours" },
+                                                    "en_cours": { "type": "boolean", "example": true }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Livre non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Modifier un livre",
+                "tags": ["Livres"],
+                "description": "Modifie les informations d'un livre.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du livre",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "titre": { "type": "string", "example": "Le Petit Prince" },
+                                    "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                    "isbn": { "type": "string", "example": "978-2070612758" },
+                                    "description": { "type": "string", "example": "Un classique de la littérature française." }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Livre modifié avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "titre": { "type": "string", "example": "Le Petit Prince" },
+                                        "auteur": { "type": "string", "example": "Antoine de Saint-Exupéry" },
+                                        "isbn": { "type": "string", "example": "978-2070612758" },
+                                        "description": { "type": "string", "example": "Un classique de la littérature française." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Titre, auteur et ISBN sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Livre non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Supprimer un livre",
+                "tags": ["Livres"],
+                "description": "Supprime un livre de la bibliothèque.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du livre",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Livre supprimé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": { "type": "string", "example": "Livre supprimé avec succès." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Livre non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/livres/{id}/statut": {
+            "patch": {
+                "summary": "Modifier le statut d'un livre",
+                "tags": ["Livres"],
+                "description": "Modifie uniquement le statut d'un livre (disponible ou emprunté).",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du livre",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "disponible": { "type": "boolean", "example": true }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Statut modifié avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "disponible": { "type": "boolean", "example": true }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètre manquant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Le champ disponible est requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Livre non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prets": {
+            "post": {
+                "summary": "Ajouter un prêt",
+                "tags": ["Prêts"],
+                "description": "Crée un nouveau prêt et met le livre comme emprunté automatiquement.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "livre_id": { "type": "integer", "example": 1 },
+                                    "emprunteur": { "type": "string", "example": "Marie Tremblay" },
+                                    "date_debut": { "type": "string", "example": "2026-04-28" },
+                                    "date_retour": { "type": "string", "example": "2026-05-15" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Prêt créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "livre_id": { "type": "integer", "example": 1 },
+                                        "emprunteur": { "type": "string", "example": "Marie Tremblay" },
+                                        "date_debut": { "type": "string", "example": "2026-04-28" },
+                                        "date_retour": { "type": "string", "example": "2026-05-15" },
+                                        "statut": { "type": "string", "example": "en_cours" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "livre_id, emprunteur et date_retour sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Livre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Livre non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Livre déjà emprunté",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Ce livre est déjà emprunté." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prets/{id}": {
+            "put": {
+                "summary": "Modifier un prêt",
+                "tags": ["Prêts"],
+                "description": "Modifie les informations d'un prêt.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du prêt",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "emprunteur": { "type": "string", "example": "Marie Tremblay" },
+                                    "date_debut": { "type": "string", "example": "2026-04-28" },
+                                    "date_retour": { "type": "string", "example": "2026-05-15" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Prêt modifié avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "emprunteur": { "type": "string", "example": "Marie Tremblay" },
+                                        "date_debut": { "type": "string", "example": "2026-04-28" },
+                                        "date_retour": { "type": "string", "example": "2026-05-15" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres manquants",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "emprunteur et date_retour sont requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Prêt non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Prêt non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Supprimer un prêt",
+                "tags": ["Prêts"],
+                "description": "Supprime un prêt.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du prêt",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Prêt supprimé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": { "type": "string", "example": "Prêt supprimé avec succès." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Prêt non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Prêt non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prets/{id}/statut": {
+            "patch": {
+                "summary": "Modifier le statut d'un prêt",
+                "tags": ["Prêts"],
+                "description": "Modifie le statut d'un prêt. Si le statut passe à 'termine', le livre redevient disponible automatiquement.",
+                "security": [{ "ApiKeyAuth": [] }],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Identifiant du prêt",
+                        "schema": { "type": "integer", "example": 1 }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "statut": { "type": "string", "enum": ["en_cours", "termine"], "example": "termine" },
+                                    "date_retour_reelle": { "type": "string", "example": "2026-05-10" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Statut modifié avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": { "type": "integer", "example": 1 },
+                                        "statut": { "type": "string", "example": "termine" },
+                                        "date_retour_reelle": { "type": "string", "example": "2026-05-10" }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètre manquant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Le champ statut est requis." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé API manquante ou invalide",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Clé API manquante." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Prêt non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Prêt non trouvé." }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erreur serveur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "erreur": { "type": "string", "example": "Erreur serveur." }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
