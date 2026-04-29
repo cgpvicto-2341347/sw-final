@@ -1,7 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
 const fs = require('fs');
-const cors = require('cors');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
@@ -16,7 +15,6 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
 // Journal des erreurs 500
