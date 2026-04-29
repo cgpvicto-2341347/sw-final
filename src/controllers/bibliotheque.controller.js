@@ -21,7 +21,7 @@ const creer = async (req, res) => {
         if (error.code === '23505') {
             return res.status(409).json({ erreur: 'Ce courriel est déjà utilisé.' });
         }
-        res.status(500).json({ erreur: 'Erreur serveur.' });
+        res.status(500).json({ error });
     }
 };
 
