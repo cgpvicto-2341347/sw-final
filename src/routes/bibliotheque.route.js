@@ -6,6 +6,6 @@ const bibliothequeController = require('../controllers/bibliotheque.controller')
 router.post('/', bibliothequeController.creer);
 
 // Récupérer ou régénérer une clé API
-router.post('/cle-api', bibliothequeController.getCleApi);
+router.get('/cle-api', bibliothequeController.getCleApi);
 
 module.exports = router;
