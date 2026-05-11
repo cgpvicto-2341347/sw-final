@@ -1,7 +1,7 @@
 const pool = require('../config/db');
 
 module.exports = async (req, res, next) => {
-    const cleApi = req.headers['x-api-key'];
+    const cleApi = req.headers.authorization;
 
     if (!cleApi) {
         return res.status(401).json({ erreur: 'Clé API manquante.' });
