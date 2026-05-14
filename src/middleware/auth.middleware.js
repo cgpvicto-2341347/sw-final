@@ -9,9 +9,9 @@ module.exports = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'SELECT * FROM bibliotheque WHERE cle_api = $1',
-            [cleApi]
-        );
+    'SELECT * FROM bibliotheque WHERE cle_api = $1::uuid',
+    [cleApi]
+);
 
         if (result.rows.length === 0) {
             return res.status(401).json({ erreur: 'Clé API invalide.' });
