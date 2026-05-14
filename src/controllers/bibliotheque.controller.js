@@ -1,7 +1,6 @@
 const bibliothequeModel = require('../models/bibliotheque.model');
 const bcrypt = require('bcrypt');
 
-// POST /api/bibliotheques
 // Créer une nouvelle bibliothèque
 const creer = async (req, res) => {
     const { nom, courriel, password } = req.body;
@@ -28,7 +27,6 @@ const creer = async (req, res) => {
     }
 };
 
-// POST /api/bibliotheques/cle-api
 // Récupérer ou régénérer une clé API
 const getCleApi = async (req, res) => {
     const { courriel, password, regenerer } = req.body;

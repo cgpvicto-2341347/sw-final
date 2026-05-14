@@ -1,7 +1,6 @@
 const pretsModel = require('../models/prets.model');
 const livresModel = require('../models/livres.model');
 
-// POST /api/prets
 // Ajouter un prêt
 const creerPret = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -31,7 +30,6 @@ const creerPret = async (req, res) => {
     }
 };
 
-// PUT /api/prets/:id
 // Modifier un prêt
 const modifierPret = async (req, res) => {
     const { id } = req.params;
@@ -52,7 +50,6 @@ const modifierPret = async (req, res) => {
     }
 };
 
-// PATCH /api/prets/:id/statut
 // Modifier le statut d'un prêt
 const modifierStatut = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -80,7 +77,6 @@ const modifierStatut = async (req, res) => {
     }
 };
 
-// DELETE /api/prets/:id
 // Supprimer un prêt
 const supprimerPret = async (req, res) => {
     const { id } = req.params;

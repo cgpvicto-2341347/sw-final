@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-// Récupérer tous les livres d'une bibliothèque (par défaut seulement les disponibles)
+// Récupérer tous les livres d'une bibliothèque 
 const getLivres = async (bibliothequeId, tous) => {
     let query = 'SELECT * FROM livres WHERE bibliotheque_id = $1';
     if (!tous) query += ' AND disponible = TRUE';

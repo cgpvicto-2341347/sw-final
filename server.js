@@ -24,7 +24,7 @@ app.use(morgan('combined', {
     stream: logStream
 }));
 
-// Documentation — accessible sans clé API
+// Documentation 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 // Routes

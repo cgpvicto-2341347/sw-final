@@ -1,6 +1,6 @@
 const livresModel = require('../models/livres.model');
 
-// GET /api/livres
+
 // Afficher tous les livres de la bibliothèque (par défaut seulement les disponibles)
 const getLivres = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -14,7 +14,7 @@ const getLivres = async (req, res) => {
     }
 };
 
-// GET /api/livres/:id
+
 // Afficher le détail d'un livre avec ses prêts
 const getLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -31,7 +31,7 @@ const getLivre = async (req, res) => {
     }
 };
 
-// POST /api/livres
+
 // Ajouter un livre
 const creerLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -49,7 +49,7 @@ const creerLivre = async (req, res) => {
     }
 };
 
-// PUT /api/livres/:id
+
 // Modifier un livre
 const modifierLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -71,7 +71,7 @@ const modifierLivre = async (req, res) => {
     }
 };
 
-// PATCH /api/livres/:id/statut
+
 // Modifier uniquement le statut d'un livre
 const modifierStatut = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
@@ -93,7 +93,7 @@ const modifierStatut = async (req, res) => {
     }
 };
 
-// DELETE /api/livres/:id
+
 // Supprimer un livre
 const supprimerLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
