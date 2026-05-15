@@ -1,29 +1,26 @@
 import pool from '../config/db.js';
- 
-// Ajouter un prêt
-const creerPret = async (livreId, emprunteur, date_debut, date_retour) => {
+
+const creerPret = async (livreId, emprunteur, date_retour_prevue) => {
     const result = await pool.query(
-        `INSERT INTO prets (livre_id, emprunteur, date_debut, date_retour)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO prets (livre_id, emprunteur, date_retour_prevue)
+         VALUES ($1, $2, $3)
          RETURNING *`,
-        [livreId, emprunteur, date_debut || new Date(), date_retour]
+        [livreId, emprunteur, date_retour_prevue]
     );
     return result.rows[0];
 };
- 
-// Modifier un prêt
-const modifierPret = async (id, emprunteur, date_debut, date_retour) => {
+
+const modifierPret = async (id, emprunteur, date_retour_prevue) => {
     const result = await pool.query(
         `UPDATE prets
-         SET emprunteur = $1, date_debut = $2, date_retour = $3
-         WHERE id = $4
+         SET emprunteur = $1, date_retour_prevue = $2
+         WHERE id = $3
          RETURNING *`,
-        [emprunteur, date_debut, date_retour, id]
+        [emprunteur, date_retour_prevue, id]
     );
     return result.rows[0] || null;
 };
- 
-// Modifier le statut d'un prêt
+
 const modifierStatut = async (id, statut, date_retour_reelle) => {
     const result = await pool.query(
         `UPDATE prets
@@ -34,8 +31,7 @@ const modifierStatut = async (id, statut, date_retour_reelle) => {
     );
     return result.rows[0] || null;
 };
- 
-// Supprimer un prêt
+
 const supprimerPret = async (id) => {
     const result = await pool.query(
         `DELETE FROM prets
@@ -45,5 +41,5 @@ const supprimerPret = async (id) => {
     );
     return result.rows[0] || null;
 };
- 
-export default{ creerPret, modifierPret, modifierStatut, supprimerPret };
+
+export default { creerPret, modifierPret, modifierStatut, supprimerPret };
