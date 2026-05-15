@@ -1,11 +1,8 @@
 import livresModel from '../models/livres.model.js';
- 
- 
-// Afficher tous les livres de la bibliothèque (par défaut seulement les disponibles)
+
 const getLivres = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const tous = req.query.tous === 'true';
- 
     try {
         const livres = await livresModel.getLivres(bibliothequeId, tous);
         res.status(200).json(livres);
@@ -13,101 +10,75 @@ const getLivres = async (req, res) => {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
- 
-// Afficher le détail d'un livre avec ses prêts
+
 const getLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const { id } = req.params;
- 
     try {
         const livre = await livresModel.getLivre(id, bibliothequeId);
-        if (!livre) {
-            return res.status(404).json({ erreur: 'Livre non trouvé.' });
-        }
+        if (!livre) return res.status(404).json({ erreur: 'Livre non trouvé.' });
         res.status(200).json(livre);
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
- 
-// Ajouter un livre
+
 const creerLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
-    const { titre, auteur, isbn, description } = req.body;
- 
+    const { titre, auteur, isbn } = req.body;
     if (!titre || !auteur || !isbn) {
         return res.status(400).json({ erreur: 'Titre, auteur et ISBN sont requis.' });
     }
- 
     try {
-        const livre = await livresModel.creerLivre(bibliothequeId, titre, auteur, isbn, description);
+        const livre = await livresModel.creerLivre(bibliothequeId, titre, auteur, isbn);
         res.status(201).json(livre);
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
- 
-// Modifier un livre
+
 const modifierLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const { id } = req.params;
-    const { titre, auteur, isbn, description } = req.body;
- 
+    const { titre, auteur, isbn } = req.body;
     if (!titre || !auteur || !isbn) {
         return res.status(400).json({ erreur: 'Titre, auteur et ISBN sont requis.' });
     }
- 
     try {
-        const livre = await livresModel.modifierLivre(id, bibliothequeId, titre, auteur, isbn, description);
-        if (!livre) {
-            return res.status(404).json({ erreur: 'Livre non trouvé.' });
-        }
+        const livre = await livresModel.modifierLivre(id, bibliothequeId, titre, auteur, isbn);
+        if (!livre) return res.status(404).json({ erreur: 'Livre non trouvé.' });
         res.status(200).json(livre);
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
- 
-// Modifier uniquement le statut d'un livre
+
 const modifierStatut = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const { id } = req.params;
     const { disponible } = req.body;
- 
     if (disponible === undefined) {
         return res.status(400).json({ erreur: 'Le champ disponible est requis.' });
     }
- 
     try {
         const livre = await livresModel.modifierStatut(id, bibliothequeId, disponible);
-        if (!livre) {
-            return res.status(404).json({ erreur: 'Livre non trouvé.' });
-        }
+        if (!livre) return res.status(404).json({ erreur: 'Livre non trouvé.' });
         res.status(200).json(livre);
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
- 
-// Supprimer un livre
+
 const supprimerLivre = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const { id } = req.params;
- 
     try {
         const livre = await livresModel.supprimerLivre(id, bibliothequeId);
-        if (!livre) {
-            return res.status(404).json({ erreur: 'Livre non trouvé.' });
-        }
+        if (!livre) return res.status(404).json({ erreur: 'Livre non trouvé.' });
         res.status(200).json({ message: 'Livre supprimé avec succès.' });
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
 };
- 
+
 export { getLivres, getLivre, creerLivre, modifierLivre, modifierStatut, supprimerLivre };
