@@ -1,5 +1,5 @@
-const bibliothequeModel = require('../models/bibliotheque.model');
-const bcrypt = require('bcrypt');
+import pool from '../config/db.js';
+import bcrypt from 'bcrypt';
 
 // Créer une nouvelle bibliothèque
 const creer = async (req, res) => {
@@ -67,4 +67,4 @@ const getCleApi = async (req, res) => {
 }
 };
 
-module.exports = { creer, getCleApi };
+export { creer, getCleApi };

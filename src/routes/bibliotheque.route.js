@@ -1,11 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { creer, getCleApi }from '../controllers/bibliotheque.controller.js';
 const router = express.Router();
-const bibliothequeController = require('../controllers/bibliotheque.controller');
-
-// Inscription d'une nouvelle bibliothèque
-router.post('/', bibliothequeController.creer);
-
-// Récupérer ou régénérer une clé API
-router.get('/cle-api', bibliothequeController.getCleApi);
-
-module.exports = router;
+ 
+router.post('/', creer);
+router.post('/cle-api', getCleApi);
+ 
+export default router;
+ 

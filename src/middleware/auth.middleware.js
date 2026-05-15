@@ -1,6 +1,6 @@
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
-module.exports = async (req, res, next) => {
+const authentification = async (req, res, next) => {
     const cleApi = req.headers.authorization;
 
     if (!cleApi) {
@@ -24,4 +24,5 @@ module.exports = async (req, res, next) => {
     } catch (error) {
         res.status(500).json({ erreur: 'Erreur serveur.' });
     }
-};
+}
+export default authentification; 

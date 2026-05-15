@@ -1,18 +1,19 @@
-const pool = require('../config/db');
-const { v4: uuidv4 } = require('uuid');
-
+import pool from '../config/db.js';
+import bcrypt from 'bcrypt';
+ 
 // Créer une nouvelle bibliothèque
 const creer = async (nom, courriel, password) => {
-    const cle_api = uuidv4();
+    const mdpHashe = await bcrypt.hash(password, 12);
+    const cleApi = crypto.randomUUID();
     const result = await pool.query(
-        `INSERT INTO bibliotheque (nom, courriel, cle_api, password) 
-         VALUES ($1, $2, $3, $4) 
+        `INSERT INTO bibliotheque (nom, courriel, cle_api, password)
+         VALUES ($1, $2, $3, $4)
          RETURNING *`,
-        [nom, courriel, cle_api, password]
+        [nom, courriel, cleApi, mdpHashe]
     );
-    return result.rows[0];
+    return cleApi;
 };
-
+ 
 // Trouver une bibliothèque par courriel
 const getParCourriel = async (courriel) => {
     const result = await pool.query(
@@ -21,17 +22,17 @@ const getParCourriel = async (courriel) => {
     );
     return result.rows[0] || null;
 };
-
+ 
 // Régénérer la clé API
 const regenererCleApi = async (id) => {
     const result = await pool.query(
-        `UPDATE bibliotheque 
-         SET cle_api = gen_random_uuid() 
-         WHERE id = $1 
+        `UPDATE bibliotheque
+         SET cle_api = gen_random_uuid()
+         WHERE id = $1
          RETURNING cle_api`,
         [id]
     );
     return result.rows[0].cle_api;
 };
-
-module.exports = { creer, getParCourriel, regenererCleApi };
+ 
+export  { creer, getParCourriel, regenererCleApi };
