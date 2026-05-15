@@ -16,4 +16,8 @@ if (process.env.DB_SSL) {
 
 const pool = new pg.Pool(params);
 
+pool.connect()
+    .then(() => console.log('Connecté à PostgreSQL'))
+    .catch(err => console.log('Erreur de connexion:', err.message));
+
 export default pool;
