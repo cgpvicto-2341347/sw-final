@@ -1,20 +1,24 @@
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
- 
-// Créer une nouvelle bibliothèque
-const creer = async (nom, courriel, password) => {
+
+const validationCle = async (cleApi) => {
+    const result = await pool.query(
+        'SELECT * FROM bibliotheque WHERE cle_api = $1 LIMIT 1',
+        [cleApi]
+    );
+    return result.rows[0] || null;
+};
+
+const creerBibliotheque = async (nom, courriel, password) => {
     const mdpHashe = await bcrypt.hash(password, 12);
     const cleApi = crypto.randomUUID();
-    const result = await pool.query(
-        `INSERT INTO bibliotheque (nom, courriel, cle_api, password)
-         VALUES ($1, $2, $3, $4)
-         RETURNING *`,
+    await pool.query(
+        'INSERT INTO bibliotheque (nom, courriel, cle_api, password) VALUES ($1, $2, $3, $4)',
         [nom, courriel, cleApi, mdpHashe]
     );
-    return cleApi;
+    return { cle_api: cleApi };
 };
- 
-// Trouver une bibliothèque par courriel
+
 const getParCourriel = async (courriel) => {
     const result = await pool.query(
         'SELECT * FROM bibliotheque WHERE courriel = $1',
@@ -22,17 +26,14 @@ const getParCourriel = async (courriel) => {
     );
     return result.rows[0] || null;
 };
- 
-// Régénérer la clé API
+
 const regenererCleApi = async (id) => {
-    const result = await pool.query(
-        `UPDATE bibliotheque
-         SET cle_api = gen_random_uuid()
-         WHERE id = $1
-         RETURNING cle_api`,
-        [id]
+    const cleApi = crypto.randomUUID();
+    await pool.query(
+        'UPDATE bibliotheque SET cle_api = $1 WHERE id = $2',
+        [cleApi, id]
     );
-    return result.rows[0].cle_api;
+    return cleApi;
 };
- 
-export  { creer, getParCourriel, regenererCleApi };
+
+export { validationCle, creerBibliotheque, getParCourriel, regenererCleApi };

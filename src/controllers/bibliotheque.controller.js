@@ -1,7 +1,6 @@
-import pool from '../config/db.js';
+import { creerBibliotheque, getParCourriel, regenererCleApi } from '../models/bibliotheque.model.js';
 import bcrypt from 'bcrypt';
 
-// Créer une nouvelle bibliothèque
 const creer = async (req, res) => {
     const { nom, courriel, password } = req.body;
 
@@ -10,8 +9,7 @@ const creer = async (req, res) => {
     }
 
     try {
-        const hash = await bcrypt.hash(password, 10);
-        const bibliotheque = await bibliothequeModel.creer(nom, courriel, hash);
+        const bibliotheque = await creerBibliotheque(nom, courriel, password);
         res.status(201).json({
             message: 'Bibliothèque créée avec succès.',
             cle_api: bibliotheque.cle_api
@@ -20,14 +18,10 @@ const creer = async (req, res) => {
         if (error.code === '23505') {
             return res.status(409).json({ erreur: 'Ce courriel est déjà utilisé.' });
         }
-        res.status(500).json({ 
-            'Erreur': "Erreur serveur",
-            'details': error
-        });
+        res.status(500).json({ erreur: 'Erreur serveur.', details: error.message });
     }
 };
 
-// Récupérer ou régénérer une clé API
 const getCleApi = async (req, res) => {
     const { courriel, password, regenerer } = req.body;
 
@@ -36,7 +30,7 @@ const getCleApi = async (req, res) => {
     }
 
     try {
-        const bibliotheque = await bibliothequeModel.getParCourriel(courriel);
+        const bibliotheque = await getParCourriel(courriel);
 
         if (!bibliotheque) {
             return res.status(404).json({ erreur: 'Aucune bibliothèque trouvée avec ce courriel.' });
@@ -47,9 +41,8 @@ const getCleApi = async (req, res) => {
             return res.status(401).json({ erreur: 'Mot de passe incorrect.' });
         }
 
-        // Si le paramètre regenerer est true, on génère une nouvelle clé API
         if (regenerer === true) {
-            const nouvelleCle = await bibliothequeModel.regenererCleApi(bibliotheque.id);
+            const nouvelleCle = await regenererCleApi(bibliotheque.id);
             return res.status(200).json({
                 message: 'Nouvelle clé API générée.',
                 cle_api: nouvelleCle
@@ -59,12 +52,11 @@ const getCleApi = async (req, res) => {
         res.status(200).json({ cle_api: bibliotheque.cle_api });
 
     } catch (error) {
-    console.log('Erreur:', error.message);
-    if (error.code === '23505') {
-        return res.status(409).json({ erreur: 'Ce courriel est déjà utilisé.' });
+        if (error.code === '23505') {
+            return res.status(409).json({ erreur: 'Ce courriel est déjà utilisé.' });
+        }
+        res.status(500).json({ erreur: 'Erreur serveur.' });
     }
-    res.status(500).json({ erreur: 'Erreur serveur.' });
-}
 };
 
 export { creer, getCleApi };
