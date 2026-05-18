@@ -57,11 +57,13 @@ const modifierStatut = async (req, res) => {
     const bibliothequeId = req.bibliotheque.id;
     const { id } = req.params;
     const { disponible } = req.body;
-    if (disponible === undefined) {
-        return res.status(400).json({ erreur: 'Le champ disponible est requis.' });
-    }
+    
     try {
-        const livre = await livresModel.modifierStatut(id, bibliothequeId, disponible);
+        let livre
+        if(disponible)
+            livre = await livresModel.modifierStatut(id, bibliothequeId, true);
+        else
+            livre = await livresModel.modifierStatut(id, bibliothequeId, false);
         if (!livre) return res.status(404).json({ erreur: 'Livre non trouvé.' });
         res.status(200).json(livre);
     } catch (error) {

@@ -4,10 +4,8 @@ const API_URL = 'https://sw-final.onrender.com/api';
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
-                btn.textContent = '🙈';
             } else {
                 input.type = 'password';
-                btn.textContent = '👁';
             }
         }
 
